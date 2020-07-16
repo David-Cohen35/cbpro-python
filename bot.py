@@ -5,16 +5,30 @@ import statistics
 import math
 from itertools import islice
 import os
+import keyboard
 from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
+import logging, time
+
+logging.basicConfig(filename='/Users/davidcohen/Desktop/cbpro-python/app.log'.format(time.time()),
+                            filemode='a',
+                            format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
+                            datefmt='%H:%M:%S',
+                            level=logging.INFO)
+
+logger = logging.getLogger(__name__)
+
+logging.debug("a")
+logging.info("b")
+logging.warning("c")
+logging.error("d")
+logging.critical("e")
 
 auth_client = cbpro.AuthenticatedClient(key=os.getenv("key"), b64secret=os.getenv("b64secret"), passphrase=os.getenv("passphrase"))
 
-
 USD_account = (auth_client.get_account('256cc64c-a387-456e-9fe1-87ec139e4d2e'))
 ETH_account = (auth_client.get_account('9fbbf4ce-3dc6-4611-90d8-b475605caa8f'))
-# print(USD_account['balance'])
-# print(ETH_account['balance'])
+
 ETH_balance = str(ETH_account['available'])
 USD_balance = str(USD_account['available'])
 
@@ -33,9 +47,9 @@ def get_bid(ticker):
 def two_dec(num):
   return (math.ceil(num*100)/100)
 
-prices = []
+prices = [] # make sure there arent global variables like this
 def midline(ticker):
-  if (len(prices) < 2400):#15900
+  if (len(prices) < 60):
     prices.append(get_ask(ticker))
   else:
     prices.pop(0)
@@ -61,22 +75,21 @@ def determine_limit_sell_price(ticker):#,buy_cost,leeway
   target = str(two_dec(1.012 * midline(ticker)))
   return target
  
-open_buy_orders = {} # will look like open_buy_orders{'d11c2c4a-951d-4a90-88a2-fe4cd5d0fef1': '1.00'}
+open_buy_orders = {} # make sure there arent global variables like this
 def buy_limit(ticker):#, leeway
-  print("buy limit")
+  logging.info("limit buy")
   open_buy_orders[(auth_client.place_limit_order(product_id=ticker, 
                               side='buy', 
                               price=determine_limit_buy_price(ticker), #,leeway
                               size='1.00'))['id']] = determine_limit_buy_price(ticker)#,leeway
 
-open_sell_orders = {} # will look like open_sell_orders{'d11c2c4a-951d-4a90-88a2-fe4cd5d0fef1': '2.00'}
+open_sell_orders = {} # make sure there arent global variables like this
 def sell_limit(ticker):#,leeway
-  print("sell limit")
-  
-  return print(auth_client.place_limit_order(product_id=ticker,
-                              side='sell', 
-                              price=determine_limit_sell_price(ticker),
-                              size=(ETH_balance)))
+  logging.info(auth_client.place_limit_order(product_id=ticker,side='sell',price=determine_limit_sell_price(ticker),size=(ETH_balance)))
+  # auth_client.place_limit_order(product_id=ticker,
+  #                             side='sell', 
+  #                             price=determine_limit_sell_price(ticker),
+  #                             size=(ETH_balance))
 
   # open_sell_orders[(auth_client.place_limit_order(product_id=ticker, '''if creating a leeway for chasing'''
   #                             side='sell', 
@@ -85,12 +98,10 @@ def sell_limit(ticker):#,leeway
   
 
 def buy_market(ticker,cost):
-  return print(auth_client.place_market_order(product_id=ticker, 
-                                side='buy', 
-                                funds=str(cost)))
+  logging.info(auth_client.place_market_order(product_id=ticker,side='buy',funds=str(cost)))
 
 def sell_market(ticker, amount):
-  return auth_client.place_market_order(product_id=ticker, 
+  auth_client.place_market_order(product_id=ticker, 
                                 side='sell', 
                                 funds=str(amount))
 
@@ -127,9 +138,10 @@ def at_least_minimum_market_cost(cost):
     return cost
   else:
     return 5
-def engine(ticker):#, leeway
+
+def engine(ticker):#, leeway     break this up into more methods
   recent_fills = []
-  while True:
+  while True: # it doesnt realtime update my wallet 
     midline(ticker)
     # chase_ask(ticker, leeway)
     # chase_bid(ticker, leeway)
@@ -137,14 +149,13 @@ def engine(ticker):#, leeway
       if float(USD_balance) * 0.10 < float(50000):
         initialCost = two_dec(float(USD_balance) * 0.10)
         cost = at_least_minimum_market_cost(initialCost)
-        if cost not in recent_fills and len(prices) > 2399:#15899
+        if cost not in recent_fills and len(prices) > 59:
           if len(recent_fills) > 4:
             recent_fills.pop(0)
           recent_fills.append(cost)
-          print(recent_fills, "  recent fills")
           buy_market(ticker,cost)
-          time.sleep(2)
-          sell_limit(ticker,)#cost,leeway
+          logging.info(ETH_balance)
+          sell_limit(ticker)#cost,leeway
       else:
         if cost not in recent_fills:
           buy_limit(ticker)#, leeway
@@ -158,6 +169,7 @@ def engine(ticker):#, leeway
         recent_fills = []
     time.sleep(1)
 engine('ETH-USD')#, 0.05
+
 
 #check if leeway needs to be a string
 # auth_client.place_stop_order(product_id='ETH-USD', 
