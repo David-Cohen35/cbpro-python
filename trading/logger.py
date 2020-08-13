@@ -1,8 +1,4 @@
-import bot
-import buys
 import logging
-import price_data
-import sells
 import time
 
 logging.basicConfig(filename='/Users/davidcohen/Desktop/cbpro-python/app.log'.format(time.time()),
