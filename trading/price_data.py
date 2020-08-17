@@ -12,11 +12,8 @@ class Price:#prices is not avaliable outside of the midline function (line 45)
     self.size = size
   
   def add_to_prices(num):
-    print(prices)
-    print(prices.prices,prices.size,'attributes')
     prices.prices.append(num)
     prices.size += 1
-    print(prices.prices,prices.size,'attributes')
 
   def remove_and_add_to_prices(num):
     prices.prices.pop(0)
@@ -44,7 +41,6 @@ class Price:#prices is not avaliable outside of the midline function (line 45)
 
   def midline(ticker):
     prices = Price(prices=[],size=0)
-    print(prices,prices.prices,prices.size,"at creation")
     if prices.size < 59:
       Price.add_to_prices(Price.get_ask(ticker))
     else:
