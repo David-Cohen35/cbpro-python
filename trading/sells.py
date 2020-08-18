@@ -11,15 +11,16 @@ def determine_limit_sell_price(values,ticker):
   target = str(Price.two_dec(1.012 * Price.midline(values,ticker)))
   return target
 
-def sell_limit(values,ticker):
-  logger.logging.info("sell limit placed")
-  logger.logging.info(account.auth_client.place_limit_order(product_id=ticker, 
-                              side='sell', 
-                              price=determine_limit_sell_price(values,ticker),
-                              size=account.ETH_balance))
+def sell_limit(values,ticker,amt_selling):
+  if not (float(account.ETH_balance) < 0.01): #if below minimum allowed for exchange ( get from user input or have default 0.01)
+    logger.logging.info(account.auth_client.place_limit_order(product_id=ticker, 
+                                side='sell', 
+                                price=determine_limit_sell_price(values,ticker),
+                                size=amt_selling))
+    logger.logging.info("sell limit placed")
 
 def sell_market(ticker, amount):
-  logger.logging.info("market selling")
   logger.logging.info(account.auth_client.place_market_order(product_id=ticker, 
                                 side='sell', 
                                 funds=str(amount)))
+  logger.logging.info("market sold")
