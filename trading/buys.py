@@ -1,6 +1,5 @@
 import cbpro
 import logger
-import os
 from price_data import Price
 import account
 

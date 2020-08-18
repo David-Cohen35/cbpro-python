@@ -1,5 +1,5 @@
 import cbpro
-import os 
+import os
 
 
 auth_client = cbpro.AuthenticatedClient(key=os.getenv("key"), b64secret=os.getenv("b64secret"), passphrase=os.getenv("passphrase"))
