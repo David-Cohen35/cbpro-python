@@ -1,27 +1,27 @@
-import buys
+import account
 import cbpro
 import logger
+import math
 import os
 import pdb
-import sells
-import account
+import statistics
 
-class Price:#prices is not avaliable outside of the midline function (line 45)
+class Price:
   def __init__(self,prices,size):
     self.prices = prices
     self.size = size
   
-  def add_to_prices(num):
-    prices.prices.append(num)
-    prices.size += 1
+  def add_to_values(values,num):
+    values.prices.append(num)
+    values.size += 1
 
-  def remove_and_add_to_prices(num):
-    prices.prices.pop(0)
-    prices.prices.append(num)
+  def remove_and_add_to_values(values,num):
+    values.prices.pop(0)
+    values.prices.append(num)
 
   def price_midline(price_list):
     avg = statistics.mean(price_list)
-    mid = two_dec(avg)
+    mid = Price.two_dec(avg)
     return mid
 
   def get_ask(ticker):
@@ -31,19 +31,18 @@ class Price:#prices is not avaliable outside of the midline function (line 45)
     return current_ask_price
 
   def get_bid(ticker):
-    current_orderbook_data = auth_client.get_product_order_book(ticker)['bids']
+    current_orderbook_data = account.auth_client.get_product_order_book(ticker)['bids']
     current_bid_data = current_orderbook_data[0]
     current_bid_price = float(current_bid_data[0])
     return current_bid_price
 
-  def two_dec(self,num):
+  def two_dec(num):
     return (math.ceil(num*100)/100)
 
-  def midline(ticker):
-    prices = Price(prices=[],size=0)
-    if prices.size < 59:
-      Price.add_to_prices(Price.get_ask(ticker))
+  def midline(values,ticker):
+    if values.size < 60:
+      Price.add_to_values(values,Price.get_ask(ticker))
     else:
-      Price.remove_and_add_to_prices(Price.get_ask(ticker))
-    mid = Price.price_midline(prices.prices)
+      Price.remove_and_add_to_values(values,Price.get_ask(ticker))
+    mid = Price.price_midline(values.prices)
     return mid
