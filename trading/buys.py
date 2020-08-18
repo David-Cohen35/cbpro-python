@@ -4,7 +4,6 @@ import os
 from price_data import Price
 import account
 
-
 def target_buy_price(values,ticker):
   target = str(Price.two_dec(1.00 * Price.midline(values,ticker)))
   return target
@@ -12,7 +11,6 @@ def target_buy_price(values,ticker):
 def determine_limit_buy_price(values,ticker):
   target = str(Price.two_dec(1.0003 * Price.midline(values,ticker)))
   return target
-
 
 def buy_limit(values,ticker):
   logger.logging.info("limit buy")

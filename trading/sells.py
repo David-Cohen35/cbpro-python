@@ -4,7 +4,6 @@ import os
 from price_data import Price
 import account
 
-
 def target_sell_price(values,ticker):
   target = str(Price.two_dec(1.007 * Price.midline(values,ticker)))
   return target
@@ -12,7 +11,6 @@ def target_sell_price(values,ticker):
 def determine_limit_sell_price(values,ticker):
   target = str(Price.two_dec(1.012 * Price.midline(values,ticker)))
   return target
-
 
 def sell_limit(values,ticker):
   logger.logging.info("sell limit placed")
