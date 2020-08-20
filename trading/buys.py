@@ -32,18 +32,23 @@ def current_price_is_target_buy_price(values,ticker):
 def check_if_buy(values,ticker,cost):
   if target_buy_price(values,ticker) not in recent_fills and values.size > 59: # 59 will be a user setting input
     maintain_recent_fills(values,ticker)
-    buy_market(ticker,cost)
+    buy_market(ticker,cost,values)
 
 def check_recent_buys_before_buying(value,ticker):
   if target_buy_price(values,ticker) not in recent_fills:
     buy_limit(values,ticker)
 
 def buy_limit(values,ticker):
-  logger.logging.info(account.auth_client.place_limit_order(product_id=ticker,side='buy',price=determine_limit_buy_price(values,ticker),size='1.00'))
+  logger.logging.info(account.auth_client.place_limit_order(product_id=ticker,
+                                    side='buy',
+                                    price=determine_limit_buy_price(values,ticker),
+                                    size='1.00'))
   logger.logging.info("limit buy")
 
-def buy_market(ticker, amount):
-  if not (float(account.USD_balance) < 5):
-    logger.logging.info(account.auth_client.place_market_order(product_id=ticker,side='buy',funds=str(amount)))
+def buy_market(ticker, amount,values):
+  if not (float(account.USD_balance) < 5) and target_buy_price(values,ticker) not in recent_fills:
+    logger.logging.info(account.auth_client.place_market_order(product_id=ticker,
+                                      side='buy',
+                                      funds=str(amount)))
     logger.logging.info("market buy")
-    sells.sell_limit(values,ticker,default_sell_amount())
+    sells.sell_limit(values,ticker,user_settings.default_sell_amount())

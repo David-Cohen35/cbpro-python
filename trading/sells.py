@@ -18,9 +18,14 @@ def current_price_is_target_sell_price(values,ticker):
 
 def sell_limit(values,ticker,amt_selling):
   if not (float(account.ETH_balance) < 0.01):
-    logger.logging.info(account.auth_client.place_limit_order(product_id=ticker,side='sell', price=determine_limit_sell_price(values,ticker),size=amt_selling))
+    logger.logging.info(account.auth_client.place_limit_order(product_id=ticker,
+                                      side='sell',
+                                      price=determine_limit_sell_price(values,ticker),
+                                      size=amt_selling))
     logger.logging.info("sell limit placed")
 
 def sell_market(ticker, amount):
-  logger.logging.info(account.auth_client.place_market_order(product_id=ticker,side='sell',funds=str(amount)))
+  logger.logging.info(account.auth_client.place_market_order(product_id=ticker,
+                                    side='sell',
+                                    funds=str(amount)))
   logger.logging.info("market sold")
