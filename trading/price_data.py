@@ -18,7 +18,7 @@ class Price:
 
   def price_midline(price_list):
     avg = statistics.mean(price_list)
-    mid = Price.two_dec(avg)
+    mid = round(avg,2)
     return mid
 
   def get_ask(ticker):
@@ -33,13 +33,11 @@ class Price:
     current_bid_price = float(current_bid_data[0])
     return current_bid_price
 
-  def two_dec(num):
-    return (math.ceil(num*100)/100)
-
   def midline(values,ticker):
-    if values.size < 60:
+    if values.size < 500:
       Price.add_to_values(values,Price.get_ask(ticker))
     else:
+      print('Bot is operational')
       Price.remove_and_add_to_values(values,Price.get_ask(ticker))
     mid = Price.price_midline(values.prices)
     return mid
