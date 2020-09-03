@@ -1,6 +1,7 @@
 import account
 import logger
 
+
 def currencies():
 	return ('ETH-USD')
 
@@ -25,7 +26,7 @@ def default_stop_order_percent_below_buy_price(price):
 	input = 3
 	percent_of_whole = (100 - input) / 100
 	response = round(float(price * percent_of_whole),2)
-	return response 
+	return response
 
 def sell_cost_is_below_exchange_minimum_fee(sell_cost):
 	if sell_cost < exchange_minimum_amount_for_lowest_market_order_fee():

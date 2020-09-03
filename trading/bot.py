@@ -21,6 +21,7 @@ def create_fills_dict():
 def sequence(ticker):
   values = create_values_list()
   fills = create_fills_dict()
+  # settings here # 
   while True:
     Buys.current_price_is_target_buy_price(values,ticker,fills)
     sells.current_price_is_target_sell_price(values,ticker,fills)

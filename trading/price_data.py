@@ -42,12 +42,10 @@ class Price:
     return current_bid_price
 
   def midline(values,ticker):
-    if values.size < 240 and values.time_keeper == 60:
+    if values.size < 10 and values.time_keeper == 2:
       Price.add_to_values(values,Price.get_ask(ticker))
       Price.restart_time_keeper(values)
-      print(values.size,"size")
-    elif values.size == 240 and values.time_keeper == 60:
-      print('Bot is operational')
+    elif values.size == 10 and values.time_keeper == 2:
       Price.remove_and_add_to_values(values,Price.get_ask(ticker))
       Price.restart_time_keeper(values)
     mid = Price.price_midline(values.prices)
