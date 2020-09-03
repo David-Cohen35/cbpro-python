@@ -13,14 +13,14 @@ def check_fills_for_sells(values,ticker,fills,curr_price):
   for k,v in fills.price_bought.items():
     amount = v[0]
     min_sell_price = v[1]
-    if curr_price >= min_sell_price:
-      if user_settings.sell_cost_is_below_exchange_minimum_fee(amount,values,ticker,fills):
+    stop_price = v[2]
+    min_sell_cost = round(float(amount) * float(min_sell_price),2)
+    if curr_price >= min_sell_price or curr_price <= stop_price:
+      if user_settings.sell_cost_is_below_exchange_minimum_fee(min_sell_cost):
         sell_market(ticker,amount,fills,k)
         break
       else:
         sell_limit(values,ticker,amount,fills,k)
-        break
-
 
 def current_price_is_target_sell_price(values,ticker,fills):
   curr_price = Price.get_bid(ticker)
@@ -33,8 +33,6 @@ def sell_limit(values,ticker,amount,fills,bought_price):
                                     price=determine_limit_sell_price(values,ticker,fills,bought_price),
                                     size=amount))
   Buys.remove_from_fills_and_holds(fills,bought_price)
-  logger.logging.info((fills.price_bought))
-  logger.logging.info((fills.holds))
 
 def sell_market(ticker,amount,fills,bought_price):
   logger.logging.info("market selling...")
@@ -42,5 +40,3 @@ def sell_market(ticker,amount,fills,bought_price):
                                     side='sell',
                                     size=str(amount)))
   Buys.remove_from_fills_and_holds(fills,bought_price)
-  logger.logging.info((fills.price_bought))
-  logger.logging.info((fills.holds))

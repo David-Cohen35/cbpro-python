@@ -1,23 +1,31 @@
 import account
+from datetime import time
 import logger
 import math
 import statistics
 
 class Price:
-  def __init__(self,prices,size):
+  def __init__(self,prices,size,time_keeper):
     self.prices = prices
     self.size = size
+    self.time_keeper = time_keeper
   
   def add_to_values(values,num):
     values.prices.append(num)
     values.size += 1
+  
+  def add_to_time_keeper(values):
+    values.time_keeper += 1
+
+  def restart_time_keeper(values):
+    values.time_keeper = 0
 
   def remove_and_add_to_values(values,num):
     values.prices.pop(0)
     values.prices.append(num)
 
   def price_midline(price_list):
-    avg = statistics.mean(price_list)
+    avg = statistics.median(price_list)
     mid = round(avg,2)
     return mid
 
@@ -34,10 +42,13 @@ class Price:
     return current_bid_price
 
   def midline(values,ticker):
-    if values.size < 500:
+    if values.size < 240 and values.time_keeper == 60:
       Price.add_to_values(values,Price.get_ask(ticker))
-    else:
+      Price.restart_time_keeper(values)
+      print(values.size,"size")
+    elif values.size == 240 and values.time_keeper == 60:
       print('Bot is operational')
       Price.remove_and_add_to_values(values,Price.get_ask(ticker))
+      Price.restart_time_keeper(values)
     mid = Price.price_midline(values.prices)
     return mid

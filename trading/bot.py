@@ -8,9 +8,10 @@ from buys import Buys
 import logger
 from price_data import Price
 import sells
+import user_settings
   
 def create_values_list():
-  values = Price(prices=[],size=0)
+  values = Price(prices=[0],size=0,time_keeper=0)
   return values
 
 def create_fills_dict():
@@ -23,5 +24,6 @@ def sequence(ticker):
   while True:
     Buys.current_price_is_target_buy_price(values,ticker,fills)
     sells.current_price_is_target_sell_price(values,ticker,fills)
+    values.time_keeper += 1
     time.sleep(1)
-sequence('ETH-USD')
+sequence(user_settings.currencies())
