@@ -3,14 +3,14 @@ from buys import Buys
 import cbpro
 import logger
 from price_data import Price
-import user_settings
+from user_settings import User
 
 def determine_limit_sell_price(min_sell_price):
   limit_price = str(min_sell_price + 0.01)
   return limit_price
 
 def market_or_limit(ticker,amount,fills,min_sell_cost,k):
-  if user_settings.sell_cost_is_below_exchange_minimum_fee(min_sell_cost):
+  if User.sell_cost_is_below_exchange_minimum_fee(min_sell_cost):
     sell_market(ticker,amount,fills,k)
   else:
     sell_limit(ticker,amount,fills,k)

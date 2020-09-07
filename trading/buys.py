@@ -2,7 +2,7 @@ import account
 import cbpro
 import logger
 from price_data import Price
-import user_settings
+from user_settings import User
 import time
 
 class Buys:
@@ -19,17 +19,17 @@ class Buys:
     target -= 0.01
     return str(target)
 
-  def market_or_limit(values,ticker,fills):
-    if user_settings.buy_cost_is_below_exchange_minimum_fee(values,ticker,fills):
-        initialCost = user_settings.default_buy_cost()
-        cost = user_settings.at_least_minimum_market_cost(initialCost)
+  def market_or_limit(values,ticker,fills,inputs):
+    if User.buy_cost_is_below_exchange_minimum_fee(values,ticker,fills,inputs):
+        initialCost = User.default_buy_cost(inputs)
+        cost = User.at_least_minimum_market_cost(initialCost)
         Buys.check_if_market_buy(values,ticker,cost,fills)
     else:
       Buys.check_recent_buys_before_limit_buy(values,ticker,fills)
 
-  def current_price_is_target_buy_price(values,ticker,fills):
+  def current_price_is_target_buy_price(values,ticker,fills,inputs):
     if Price.get_ask(ticker) <= float(Buys.target_buy_price(values,ticker)):
-      Buys.market_or_limit(values,ticker,fills)
+      Buys.market_or_limit(values,ticker,fills,inputs)
   
   def check_if_market_buy(values,ticker,cost,fills):
     if str(float(Buys.target_buy_price(values,ticker))//1) not in fills.holds and values.size >= 9:
@@ -44,7 +44,7 @@ class Buys:
     size = order['filled_size']
     price = float(order['executed_value']) / float(size)
     min_sell_price = round((price*1.006),2)
-    stop_price = user_settings.default_stop_order_percent_below_buy_price(price)
+    stop_price = User.default_stop_order_percent_below_buy_price(price)
     fills.price_bought[price] = [size,min_sell_price,stop_price]
     fills.holds.add((float(price)//1))
 
@@ -56,8 +56,8 @@ class Buys:
     order_details = account.auth_client.place_limit_order(product_id=ticker,
                                       side='buy',
                                       price=determine_limit_buy_price(values,ticker),
-                                      size=user_settings.default_limit_buy_size())
-    size = user_settings.default_limit_buy_size()
+                                      size=User.default_limit_buy_size())
+    size = User.default_limit_buy_size()
     price = determine_limit_buy_price(values,ticker)
     fills.price_bought[price] = [size,0,0,0]
     fills.holds.add((float(price)//1))
