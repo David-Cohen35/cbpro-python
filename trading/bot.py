@@ -19,17 +19,17 @@ def create_fills_dict():
   return fills
 
 def get_users_input():
-  inputs = User(currency=str(),default_buy_cost=int(),default_limit_buy_size=str(),stop_order_percent=int())
+  inputs = User(currency=str(),default_buy_cost=int(),default_limit_buy_size=str(),stop_order_percent=int(),minimum_market_order_size=float())
   return inputs
 
-inputs = get_users_input()
-def sequence(inputs,ticker):
+def sequence():
+  inputs = get_users_input()
+  chosen_currency = f'{(inputs.currency)}-USD'
   values = create_values_list()
   fills = create_fills_dict()
   while True:
-    Buys.current_price_is_target_buy_price(values,ticker,fills,inputs)
-    sells.current_price_is_target_sell_price(values,ticker,fills)
+    Buys.current_price_is_target_buy_price(values,chosen_currency,fills,inputs)
+    sells.current_price_is_target_sell_price(values,chosen_currency,fills)
     values.time_keeper += 1
     time.sleep(1)
-chosen_currency = f'{(inputs.currency).upper()}-USD'
-sequence(inputs,chosen_currency)
+sequence()

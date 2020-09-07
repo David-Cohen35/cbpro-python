@@ -10,7 +10,7 @@ def determine_limit_sell_price(min_sell_price):
   return limit_price
 
 def market_or_limit(ticker,amount,fills,min_sell_cost,k):
-  if User.sell_cost_is_below_exchange_minimum_fee(min_sell_cost):
+  if User.sell_cost_is_below_exchange_minimum_size(min_sell_cost):
     sell_market(ticker,amount,fills,k)
   else:
     sell_limit(ticker,amount,fills,k)
@@ -30,7 +30,6 @@ def current_price_is_target_sell_price(values,ticker,fills):
   check_fills_for_sells(values,ticker,fills,curr_price)
 
 def sell_limit(ticker,amount,fills,bought_price,min_sell_price):
-  logger.logging.info("setting limit sell order...")
   logger.logging.info(account.auth_client.place_limit_order(product_id=ticker,
                                     side='sell',
                                     price=determine_limit_sell_price(min_sell_price),
@@ -38,7 +37,6 @@ def sell_limit(ticker,amount,fills,bought_price,min_sell_price):
   Buys.remove_from_fills_and_holds(fills,bought_price)
 
 def sell_market(ticker,amount,fills,bought_price):
-  logger.logging.info("market selling...")
   logger.logging.info(account.auth_client.place_market_order(product_id=ticker,
                                     side='sell',
                                     size=str(amount)))

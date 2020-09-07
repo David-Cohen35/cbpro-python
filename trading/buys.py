@@ -61,6 +61,7 @@ class Buys:
     price = determine_limit_buy_price(values,ticker)
     fills.price_bought[price] = [size,0,0,0]
     fills.holds.add((float(price)//1))
+    logging.logger.info(order_details)
 
   def buy_market(ticker,amount,values,fills):
     if (float(account.USD_balance)) >= 5 and (float(Buys.target_buy_price(values,ticker))//1) not in fills.holds:
@@ -68,3 +69,4 @@ class Buys:
                                         side='buy',
                                         funds=str(amount))
       manage_fills_and_holds(order_details)
+      logging.logger.info(order_details)

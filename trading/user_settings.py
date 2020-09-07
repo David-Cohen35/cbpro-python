@@ -2,31 +2,64 @@ import account
 import logger
 
 class User:
-	def __init__(self,currency,default_buy_cost,default_limit_buy_size,stop_order_percent):
-		self.currency = input('Enter BTC or ETH to trade against USD:  ')
-		self.default_buy_cost = float(input('Enter $ amount to spend on each market buy order:  '))
-		self.default_limit_buy_size = input('Enter amount of crypto to purchase on each limit buy order (minimum "0.01"):  ')
-		self.stop_order_percent = input('Enter how many percent below buy price the stop orders should be set:  ')
+	def __init__(self,currency,default_buy_cost,default_limit_buy_size,stop_order_percent,minimum_market_order_size):
+		self.currency = User.intake_currency(self)
+		self.default_buy_cost = User.intake_default_buy_cost(self)
+		self.default_limit_buy_size = User.intake_default_limit_buy_size(self)
+		self.stop_order_percent = User.intake_stop_order_percent(self)
+		self.minimum_market_order_size = User.intake_minimum_market_order_size(self)
 
-	# def intake_currency():
-	# 	try:
-	# 		response = input('Enter BTC or ETH to trade against USD:  ')
-	# 		type(response) == str() and (response.upper() == 'ETH' or response.upper() == 'BTC')
-	# 	except:
-	# 		print('Please enter "BTC" or "ETH"')
-	# 		intake_currency()
+	def intake_currency(self):
+		response = ''
+		while response.upper() not in['ETH', 'BTC']:
+			try:
+				response = input('Enter BTC or ETH to trade against USD:   ')
+				response = response.upper()
+			except KeyboardInterrupt:
+				print("user wants to quit")
+				break
+			print("got", response)
+		return response
+
+	def intake_default_buy_cost(self):
+		response = 0
+		while response is 0:
+			try:
+				response = int(input('Enter $ amount to spend on each markey buy order (minimum = 5):   '))
+				response >= 5 
+			except KeyboardInterrupt:
+				print("user wants to quit")
+				break
+			print("got", response)
+		return response
 	
-	# def intake_default_buy_cost():
-	# 	pass
-	
-	# def intake_default_limit_buy_size():
-	# 	pass
+	def intake_default_limit_buy_size(self):
+		response = 0
+		while response is 0:
+			try:
+				response = float(input('Enter amount of crypto to purchase on each limit buy order (minimum "0.01"):  '))
+				0.01 <= response <= 100
+				response = str(response)
+			except KeyboardInterrupt:
+				print("user wants to quit")
+				break
+			print("got", response)
+		return response
 
-	# def intake_stop_order_percent():
-	# 	pass
+	def intake_stop_order_percent(self):
+		response = 0
+		while response is 0:
+			try:
+				response = float(input('Enter how many percent below buy price the stop orders should be set (a number between 1-100):  '))
+				response >= 0.0
+			except KeyboardInterrupt:
+				print("user wants to quit")
+				break
+			print("got", response)
+		return response
 
-	def exchange_minimum_amount_for_lowest_market_order_fee():
-		return float(50000)
+	def intake_minimum_market_order_size(self):
+		return 50000.00
 
 	def at_least_minimum_market_cost(cost):
 		return cost if cost>=5 else 5
@@ -38,7 +71,7 @@ class User:
 		return inputs.default_limit_buy_size
 
 	def buy_cost_is_below_exchange_minimum_fee(values,ticker,fills,inputs):
-		if float(User.default_buy_cost(inputs)) < User.exchange_minimum_amount_for_lowest_market_order_fee():
+		if inputs.default_buy_cost < inputs.minimum_market_order_size:
 			return True
 		return False
 
@@ -48,6 +81,6 @@ class User:
 		return response
 
 	def sell_cost_is_below_exchange_minimum_fee(sell_cost):
-		if sell_cost < User.exchange_minimum_amount_for_lowest_market_order_fee():
+		if sell_cost < Buys.exchange_minimum_amount_for_lowest_market_order_fee():
 			return True
 		return False
