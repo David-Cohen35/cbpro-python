@@ -10,12 +10,12 @@ class Buys:
     self.price_bought = price_bought
     self.holds = holds
 
-  def target_buy_price(values,ticker):
-    target = str(round((0.9998 * Price.midline(values,ticker)),2))
+  def target_buy_price(values,ticker,inputs):
+    target = str(round((0.99965 * Price.midline(values,ticker,inputs)),2))
     return target
 
-  def determine_limit_buy_price(values,ticker):
-    target = round(0.9998 * Price.midline(values,ticker),2)
+  def determine_limit_buy_price(values,ticker,inputs):
+    target = round(0.99965 * Price.midline(values,ticker,inputs),2)
     target -= 0.01
     return str(target)
 
@@ -23,50 +23,63 @@ class Buys:
     if User.buy_cost_is_below_exchange_minimum_fee(values,ticker,fills,inputs):
         initialCost = User.default_buy_cost(inputs)
         cost = User.at_least_minimum_market_cost(initialCost)
-        Buys.check_if_market_buy(values,ticker,cost,fills)
+        Buys.check_if_market_buy(values,ticker,cost,fills,inputs)
     else:
-      Buys.check_recent_buys_before_limit_buy(values,ticker,fills)
+      Buys.check_recent_buys_before_limit_buy(values,ticker,fills,inputs)
 
   def current_price_is_target_buy_price(values,ticker,fills,inputs):
-    if Price.get_ask(ticker) <= float(Buys.target_buy_price(values,ticker)):
+    if Price.get_ask(ticker) <= float(Buys.target_buy_price(values,ticker,inputs)):
       Buys.market_or_limit(values,ticker,fills,inputs)
   
-  def check_if_market_buy(values,ticker,cost,fills):
-    if str(float(Buys.target_buy_price(values,ticker))//1) not in fills.holds and values.size >= 9:
-      Buys.buy_market(ticker,cost,values,fills)
+  def check_if_market_buy(values,ticker,cost,fills,inputs):
+    curr_target = float(Buys.target_buy_price(values,ticker,inputs))
+    if (float(account.USD_balance) >= 5) and ((curr_target//1) not in fills.holds) and (values.size >= inputs.mid_size -1):
+      Buys.buy_market(ticker,cost,values,fills,inputs)
 
-  def check_recent_buys_before_limit_buy(values,ticker,fills):
-    if str(float(target_buy_price(values,ticker))//1) not in fills.holds:
-      Buys.buy_limit(values,ticker)
+  def check_recent_buys_before_limit_buy(values,ticker,fills,inputs):
+    curr_target = float(Buys.target_buy_price(values,ticker,inputs))
+    if (curr_target//1) not in fills.holds:
+      Buys.buy_limit(values,ticker,inputs)
   
-  def manage_fills_and_holds(order_details):
-    order = account.auth_client.get_order(order_details['id'])
-    size = order['filled_size']
-    price = float(order['executed_value']) / float(size)
-    min_sell_price = round((price*1.006),2)
-    stop_price = User.default_stop_order_percent_below_buy_price(price)
-    fills.price_bought[price] = [size,min_sell_price,stop_price]
-    fills.holds.add((float(price)//1))
+  def manage_fills_and_holds(order_details,inputs,fills):
+    try:
+      order = account.auth_client.get_order(order_details['id'])
+      size = order['filled_size']
+      price = round((float(order['executed_value']) / float(size)),2)
+      min_sell_price = round((price*1.008),2)
+      stop_price = User.default_stop_order_percent_below_buy_price(price,inputs)
+      fills.price_bought[price] = [size,min_sell_price,stop_price]
+      fills.holds.add((price//1))
+      fills.holds.add((price//1)+1)
+      fills.holds.add((price//1)-1)
+      logger.logging.info(order_details)
+      logger.logging.info(fills.price_bought)
+      logger.logging.info(fills.holds)
+    except:
+      pass
 
   def remove_from_fills_and_holds(fills,bought_price):
+    bought_price = float(bought_price)
     del fills.price_bought[bought_price]
-    fills.holds.remove((float(bought_price)//1))
+    fills.holds.remove(bought_price//1)
+    fills.holds.remove((bought_price//1)+1)
+    fills.holds.remove((bought_price//1)-1)
+    logger.logging.info(fills.holds)
 
-  def buy_limit(values,ticker,fills):
+  def manage_limit_buy(fills,price,size,order_details):
+    fills.price_bought[price] = [size,0,0,0]
+    fills.holds.add(float(price)//1)
+    logger.logging.info(order_details)
+
+  def buy_limit(values,ticker,fills,inputs):
     order_details = account.auth_client.place_limit_order(product_id=ticker,
                                       side='buy',
-                                      price=determine_limit_buy_price(values,ticker),
+                                      price=determine_limit_buy_price(values,ticker,inputs),
                                       size=User.default_limit_buy_size())
-    size = User.default_limit_buy_size()
-    price = determine_limit_buy_price(values,ticker)
-    fills.price_bought[price] = [size,0,0,0]
-    fills.holds.add((float(price)//1))
-    logging.logger.info(order_details)
+    Buys.manage_limit_buy(fills,price,size,order_details)
 
-  def buy_market(ticker,amount,values,fills):
-    if (float(account.USD_balance)) >= 5 and (float(Buys.target_buy_price(values,ticker))//1) not in fills.holds:
-      order_details = account.auth_client.place_market_order(product_id=ticker,
-                                        side='buy',
-                                        funds=str(amount))
-      manage_fills_and_holds(order_details)
-      logging.logger.info(order_details)
+  def buy_market(ticker,amount,values,fills,inputs):
+    order_details = account.auth_client.place_market_order(product_id=ticker,
+                                      side='buy',
+                                      funds=str(amount))
+    Buys.manage_fills_and_holds(order_details,inputs,fills)

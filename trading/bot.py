@@ -19,7 +19,12 @@ def create_fills_dict():
   return fills
 
 def get_users_input():
-  inputs = User(currency=str(),default_buy_cost=int(),default_limit_buy_size=str(),stop_order_percent=int(),minimum_market_order_size=float())
+  inputs = User(currency=str(),
+  default_buy_cost=int(),
+  default_limit_buy_size=str(),
+  stop_order_percent=int(),
+  minimum_market_order_size=float(),
+  mid_size=int())
   return inputs
 
 def sequence():

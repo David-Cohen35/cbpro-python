@@ -41,11 +41,11 @@ class Price:
     current_bid_price = float(current_bid_data[0])
     return current_bid_price
 
-  def midline(values,ticker):
-    if values.size < 10 and values.time_keeper == 2:
+  def midline(values,ticker,inputs):
+    if values.size < inputs.mid_size and values.time_keeper == 60:
       Price.add_to_values(values,Price.get_ask(ticker))
       Price.restart_time_keeper(values)
-    elif values.size == 10 and values.time_keeper == 2:
+    elif values.size == inputs.mid_size and values.time_keeper == 60:
       Price.remove_and_add_to_values(values,Price.get_ask(ticker))
       Price.restart_time_keeper(values)
     mid = Price.price_midline(values.prices)
