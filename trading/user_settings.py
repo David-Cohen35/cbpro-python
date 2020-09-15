@@ -24,54 +24,64 @@ class User:
 
 	def intake_default_buy_cost(self):
 		response = 0
-		while response is 0:
+		while response < 5:
 			try:
-				response = int(input('Enter $ amount to spend on each markey buy order (minimum = 5):   '))
-				response >= 5 
+				response = float(input('Enter $ amount to spend on each market buy order (minimum = 5):   '))
+				if response > 5: continue 
 			except KeyboardInterrupt:
 				print("user wants to quit")
 				break
+			except:
+				print('Must enter a number greater than or equal to 5')
+				continue
 			print("got", response)
 		return response
 	
 	def intake_default_limit_buy_size(self):
-		response = 0
-		while response is 0:
+		response = 0.00
+		while response < 0.01:
 			try:
 				response = float(input('Enter amount of crypto to purchase on each limit buy order (minimum "0.01"):  '))
-				0.01 <= response <= 100
-				response = str(response)
 			except KeyboardInterrupt:
 				print("user wants to quit")
 				break
+			except:
+				print("Must enter a number greater than or equal to 0.01")
+				response = 0.00
+				continue
 			print("got", response)
-		return response
+		return str(response)
 
 	def intake_stop_order_percent(self):
 		response = 0
-		while response is 0:
+		while response == 0:
 			try:
-				response = float(input('Enter how many percent below buy price the stop orders should be set (a number between 1-100):  '))
-				response >= 0.0
+				response = float(input('Enter how many percent below buy price the stop orders should be set (a number between 0.01-100):  '))
 			except KeyboardInterrupt:
 				print("user wants to quit")
 				break
+			except:
+				print("Must enter a number between 0-100")
+				response = 0
+				continue
 			print("got", response)
 		return response
 
 	def intake_mid_size(self):
-		hours = '0'
-		minutes = '0'
-		while hours == '0' and minutes == '0':
+		hours = minutes = '0'
+		while hours == '0' or minutes == '0':
 			try:
 				hours = int(input('Enter how many hours in the trading range:  '))
 				minutes = int(input('Enter how many minutes in the trading range:  '))
-				0 < hours
-				minutes < 60
 				response = (hours * 60) + minutes
+				if response < 1: hours = minutes = '0'
 			except KeyboardInterrupt:
 				print("user wants to quit")
 				break
+			except:
+				print("Must enter a whole number greater than or equal to 0")
+				hours = minutes = '0'
+				continue
 			print("got", hours,"hour(s) and", minutes,"minutes")
 		return response
 

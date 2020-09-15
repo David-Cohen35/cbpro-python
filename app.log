@@ -1,0 +1,4 @@
+21:18:07,791 root INFO b
+21:18:07,791 root WARNING c
+21:18:07,792 root ERROR d
+21:18:07,792 root CRITICAL e
