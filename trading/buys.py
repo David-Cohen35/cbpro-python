@@ -11,19 +11,19 @@ class Buys:
     self.holds = holds
 
   def target_buy_price(values,ticker,inputs):
-    target = str(round((0.9995 * Price.midline(values,ticker,inputs)),2))
+    target = str(round((0.996 * Price.midline(values,ticker,inputs)),2))
     return target
 
   def determine_limit_buy_price(values,ticker,inputs):
-    target = round(0.9995 * Price.midline(values,ticker,inputs),2)
+    target = round(0.996 * Price.midline(values,ticker,inputs),2)
     target -= 0.01
     return str(target)
 
   def market_or_limit(values,ticker,fills,inputs):
     if User.buy_cost_is_below_exchange_minimum_fee(values,ticker,fills,inputs):
-        initialCost = User.default_buy_cost(inputs)
-        cost = User.at_least_minimum_market_cost(initialCost)
-        Buys.check_if_market_buy(values,ticker,cost,fills,inputs)
+      initialCost = User.default_buy_cost(inputs)
+      cost = User.at_least_minimum_market_cost(initialCost)
+      Buys.check_if_market_buy(values,ticker,cost,fills,inputs)
     else:
       Buys.check_recent_buys_before_limit_buy(values,ticker,fills,inputs)
 
@@ -31,12 +31,13 @@ class Buys:
     if Price.get_ask(ticker) <= float(Buys.target_buy_price(values,ticker,inputs)):
       Buys.market_or_limit(values,ticker,fills,inputs)
   
+  def free_from_similar_prices(curr_target,fills):
+    return (curr_target//1) not in fills.holds and ((curr_target//1)-1) not in fills.holds and ((curr_target//1)+1) not in fills.holds 
+
   def check_if_market_buy(values,ticker,cost,fills,inputs):
     curr_target = float(Buys.target_buy_price(values,ticker,inputs))
-    if (float(account.USD_balance) >= 5) and ((curr_target//1) not in fills.holds) and (values.size >= inputs.mid_size -1):
-      print(curr_target//1,"curr target")
-      print(fills.holds,'fills holds')
-      print((curr_target//1) not in fills.holds,'curr target is not in fills holds')
+    if (float(account.USD_balance) >= 5) and Buys.free_from_similar_prices(curr_target,fills) and (values.size >= inputs.mid_size -1):
+      print(curr_target,"---",fills.holds)
       Buys.buy_market(ticker,cost,values,fills,inputs)
 
   def check_recent_buys_before_limit_buy(values,ticker,fills,inputs):
