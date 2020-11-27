@@ -1,7 +1,7 @@
 import logging
 import time
 
-logging.basicConfig(filename='/Users/davidcohen/Desktop/cbpro-python/app.log'.format(time.time()),
+logging.basicConfig(filename='app.log'.format(time.time()),
                             filemode='a',
                             format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
                             datefmt='%H:%M:%S',
