@@ -1,4 +1,34 @@
-21:18:07,791 root INFO b
-21:18:07,791 root WARNING c
-21:18:07,792 root ERROR d
-21:18:07,792 root CRITICAL e
+11:16:24,803 root INFO b
+11:16:24,804 root WARNING c
+11:16:24,804 root ERROR d
+11:16:24,804 root CRITICAL e
+13:37:45,883 root INFO b
+13:37:45,884 root WARNING c
+13:37:45,885 root ERROR d
+13:37:45,885 root CRITICAL e
+15:34:33,760 root INFO {'id': '30477074-6d9d-4fc9-92b3-9698ccfa2a39', 'product_id': 'ETH-USD', 'side': 'buy', 'stp': 'dc', 'funds': '4.97512437', 'specified_funds': '5.0', 'type': 'market', 'post_only': False, 'created_at': '2020-11-18T20:34:33.590103Z', 'fill_fees': '0', 'filled_size': '0', 'executed_value': '0', 'status': 'pending', 'settled': False}
+15:34:33,763 root INFO {470.09: ['0.01058334', 478.55, 458.34]}
+15:34:33,763 root INFO {469.0, 470.0, 471.0}
+18:19:37,528 root INFO b
+18:19:37,529 root WARNING c
+18:19:37,529 root ERROR d
+18:19:37,530 root CRITICAL e
+19:10:50,738 root INFO {'id': '72847111-182c-4b7e-9f60-5eb781ef1561', 'product_id': 'ETH-USD', 'side': 'buy', 'stp': 'dc', 'funds': '4.97512437', 'specified_funds': '5.0', 'type': 'market', 'post_only': False, 'created_at': '2020-11-19T00:10:52.591416Z', 'fill_fees': '0', 'filled_size': '0', 'executed_value': '0', 'status': 'pending', 'settled': False}
+19:10:50,740 root INFO {477.78: ['0.01041300', 486.38, 465.84]}
+19:10:50,740 root INFO {476.0, 477.0, 478.0}
+12:00:04,834 root INFO b
+12:00:04,835 root WARNING c
+12:00:04,835 root ERROR d
+12:00:04,835 root CRITICAL e
+12:01:15,269 root INFO b
+12:01:15,269 root WARNING c
+12:01:15,269 root ERROR d
+12:01:15,269 root CRITICAL e
+12:02:27,790 root INFO b
+12:02:27,790 root WARNING c
+12:02:27,790 root ERROR d
+12:02:27,790 root CRITICAL e
+12:02:55,179 root INFO b
+12:02:55,179 root WARNING c
+12:02:55,179 root ERROR d
+12:02:55,179 root CRITICAL e
