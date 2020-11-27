@@ -1,6 +1,0 @@
-key="537346819694734f0dda6fcca10d36a0"
-b64secret="YeUecaeriPoUPQMbd9CPoutMnvCmr7fBMWvV025PMydsrkHJymdfTSs99F+wjWpKcOT3P3wKx1l6bbu3B+/oig=="
-passphrase="cj2foltebs"
-usd_account="256cc64c-a387-456e-9fe1-87ec139e4d2e"
-eth_account="9fbbf4ce-3dc6-4611-90d8-b475605caa8f"
-btc_account="d84959a8-2bab-4557-a2d1-2a23e32b63fa"
